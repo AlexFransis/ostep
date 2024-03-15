@@ -3,11 +3,14 @@
 #include "queue.h"
 
 
-void init_empty_queue(TaskQueue* tq, unsigned int max_size)
+TaskQueue init_empty_queue(unsigned int max_size)
 {
-        tq->size = 0;
-        tq->max_size = max_size;
-        tq->task_list = malloc(sizeof(Task*) * max_size);
+        TaskQueue tq;
+        tq.size = 0;
+        tq.max_size = max_size;
+        tq.task_list = malloc(sizeof(Task*) * max_size);
+
+        return tq;
 };
 
 void queue(Task* t, TaskQueue* tq)
