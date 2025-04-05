@@ -1,8 +1,14 @@
-#include "cpu_core.h"
+#ifndef GUARD_scheduler_h
+#define GUARD_scheduler_h
 
+#include "task.h"
 
-Task* create_task(unsigned int duration);
-Task* create_random_task();
-void schedule_task(Task* t);
-void run_task(Task* t, CPU_CORE* cpu_core);
-void generate_uuid(char* );
+typedef enum SchedulingPolicy {
+        FIFO,
+} SchedulingPolicy;
+
+void start_scheduler(SchedulingPolicy policy, int nb_of_tasks);
+void generate_task(Task* t);
+void generate_uuid(char*, unsigned int length);
+
+#endif

@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build C Program",
+        "type": "shell",
+        "command": "clang",
+        "args": [
+          "-g",
+          "main.c",
+          "fifo.c",
+          "queue.c",
+          "scheduler.c",
+          "task.c",
+          "cpu_core.c",
+          "-o",
+          "program"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"]
+      }
+    ]
+  }
+  

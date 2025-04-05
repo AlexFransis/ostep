@@ -8,9 +8,3 @@ TaskQueue init_fifo_scheduler()
 
         return tq;
 };
-
-
-void schedule_task(Task *t, TaskQueue* tq)
-{
-        queue(t, tq);
-}

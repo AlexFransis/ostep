@@ -4,7 +4,5 @@
 #include "queue.h"
 
 TaskQueue init_fifo_scheduler();
-void schedule_task(Task* t, TaskQueue* tq);
-
 
 #endif

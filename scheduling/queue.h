@@ -12,12 +12,14 @@ typedef struct TaskQueue {
         Task** task_list;
 } TaskQueue;
 
-void queue(Task* t, TaskQueue* tq);
+bool queue(Task* t, TaskQueue* tq);
 Task* dequeue(TaskQueue* tq);
 bool is_empty(TaskQueue* tq);
 bool is_full(TaskQueue* tq);
 TaskQueue init_empty_queue(unsigned int max_size);
 Task* head(TaskQueue* tq);
 Task* tail(TaskQueue* tq);
+
+void free_queue(TaskQueue* tq);
 
 #endif
