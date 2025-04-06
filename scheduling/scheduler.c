@@ -12,7 +12,7 @@ void generate_uuid(char* uuid, unsigned int length)
         const char* alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyz";
         const long alphanumeric_len = strlen(alphanumeric);
 
-        for (int i = 0; i < length; ++i) {
+        for (unsigned int i = 0; i < length; ++i) {
                 int random = rand() % alphanumeric_len;
                 uuid[i] = alphanumeric[random];
         }
@@ -31,25 +31,23 @@ void generate_task(Task* t)
 };
 
 
-void start_scheduler(SchedulingPolicy policy, int nb_of_tasks)
+void start_fifo_scheduler(int nb_of_tasks)
 {
-        if (policy == FIFO) {
-                // create queue
-                TaskQueue tq = init_empty_queue(nb_of_tasks);
+        // create queue
+        TaskQueue tq = init_empty_queue(nb_of_tasks);
 
-                // begin queuing tasks
-                for (int i = 0; i < nb_of_tasks; ++i) {
-                        // create fake task
-                        Task* t = malloc(sizeof(Task));
-                        generate_task(t);
-                        queue(t, &tq);
-                }
+        // begin queuing tasks
+        for (int i = 0; i < nb_of_tasks; ++i) {
+                // create fake task
+                Task* t = malloc(sizeof(Task));
+                generate_task(t);
+                queue(t, &tq);
+        }
 
-                // begin fifo scheduling
-                while (tq.size > 0) {
-                        Task* t = dequeue(&tq);
-                        do_work(t);
-                        free_task(t);
-                }
+        // begin fifo scheduling
+        while (tq.size > 0) {
+                Task* t = dequeue(&tq);
+                do_work(t);
+                free_task(t);
         }
 }

@@ -36,7 +36,7 @@ Task* dequeue(TaskQueue* tq)
 
         Task* t = head(tq);
         // move all array elements forward by 1
-        for (int i = 0; i <= tq->size - 1; i++) {
+        for (unsigned int i = 0; i <= tq->size - 1; i++) {
                 Task* next = tq->task_list[i+1];
                 tq->task_list[i] = next;
         }
@@ -77,7 +77,7 @@ Task* tail(TaskQueue* tq)
 
 void free_queue(TaskQueue *tq)
 {
-        for (int i = 0; i < tq->size; ++i) {
+        for (unsigned int i = 0; i < tq->size; ++i) {
                 Task* task_to_free = *(tq->task_list + i);
                 free_task(task_to_free);
         }
