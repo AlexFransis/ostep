@@ -11,8 +11,22 @@ TaskQueue init_empty_queue(unsigned int max_size)
         tq.max_size = max_size;
         tq.task_list = malloc(sizeof(Task*) * max_size);
 
+        if (tq.task_list == NULL) {
+                /* add error handling */
+        }
+
         return tq;
 };
+
+void free_queue(TaskQueue *tq)
+{
+        for (unsigned int i = 0; i < tq->size; ++i) {
+                Task* task_to_free = *(tq->task_list + i);
+                free_task(task_to_free);
+        }
+
+        free(tq->task_list);
+}
 
 bool queue(Task* t, TaskQueue* tq)
 {
@@ -36,10 +50,11 @@ Task* dequeue(TaskQueue* tq)
 
         Task* t = head(tq);
         // move all array elements forward by 1
-        for (unsigned int i = 0; i <= tq->size - 1; i++) {
+        for (unsigned int i = 0; i < tq->size - 1; i++) {
                 Task* next = tq->task_list[i+1];
                 tq->task_list[i] = next;
         }
+
         tq->size -= 1;
 
         return t;
@@ -74,13 +89,3 @@ Task* tail(TaskQueue* tq)
         Task** queue = tq->task_list;
         return *(queue + tq->size - 1);
 };
-
-void free_queue(TaskQueue *tq)
-{
-        for (unsigned int i = 0; i < tq->size; ++i) {
-                Task* task_to_free = *(tq->task_list + i);
-                free_task(task_to_free);
-        }
-
-        free(tq);
-}

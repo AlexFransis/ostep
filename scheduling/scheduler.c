@@ -6,6 +6,9 @@
 #include "cpu_core.h"
 #include "task.h"
 
+#define UUID_MAX_LENGTH 4
+#define TASK_MAX_DURATION 3 // in seconds
+
 
 void generate_uuid(char* uuid, unsigned int length)
 {
@@ -22,11 +25,13 @@ void generate_uuid(char* uuid, unsigned int length)
 
 void generate_task(Task* t)
 {
-        const int uuid_size = 4;
-        const int max_duration = 3; // in seconds
-        char* uuid = (char*) malloc(uuid_size * sizeof(char));
-        generate_uuid(uuid, uuid_size);
-        t->duration = rand() % max_duration;
+        char* uuid = (char*) malloc(UUID_MAX_LENGTH * sizeof(char));
+        if (uuid == NULL) {
+                /* add error handling */
+        }
+
+        generate_uuid(uuid, UUID_MAX_LENGTH);
+        t->duration = rand() % TASK_MAX_DURATION;
         t->task_id = uuid;
 };
 
