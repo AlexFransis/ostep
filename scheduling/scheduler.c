@@ -31,7 +31,7 @@ void generate_task(Task* t)
         }
 
         generate_uuid(uuid, UUID_MAX_LENGTH);
-        t->duration = rand() % TASK_MAX_DURATION;
+        t->duration = rand() % TASK_MAX_DURATION + 1;
         t->task_id = uuid;
 };
 
