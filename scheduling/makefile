@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -g -arch arm64
 TARGET = program
 
 # Source files
-SRCS = main.c fifo.c queue.c scheduler.c task.c cpu_core.c
+SRCS = main.c fifo.c queue.c scheduler.c task.c quicksort.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)

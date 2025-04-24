@@ -1,3 +1,4 @@
 *.pdf
 *dSym
 *.o
+.DS_Store

@@ -13,6 +13,7 @@
           "scheduler.c",
           "task.c",
           "cpu_core.c",
+          "quicksort.c",
           "-o",
           "program"
         ],

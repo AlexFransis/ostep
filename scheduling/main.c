@@ -15,6 +15,7 @@ struct scheduler_entry
 struct scheduler_entry schedulers[] =
 {
         {"fifo", start_fifo_scheduler},
+        {"sjf", start_sjf_scheduler},
         // add schedulers here
 
         {NULL, NULL} // sentinel
@@ -23,7 +24,7 @@ struct scheduler_entry schedulers[] =
 void print_usage()
 {
         printf("Usage: ./main <scheduling_policy> <number_of_tasks>? <seed>?\n");
-        printf("  scheduling_policy: Strategy to use (fifo)\n");
+        printf("  scheduling_policy: Strategy to use (fifo), (sjf)\n");
         printf("  seed: Random seed for reproducibility (default: current time)\n");
         printf("  number_of_tasks: Number of tasks to simulate (default: 10)\n");
 };
