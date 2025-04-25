@@ -2,16 +2,18 @@
 #include <string.h>
 #include "task.h"
 
-#define UUID_MAX_LENGTH 2
+#define UUID_MAX_LENGTH 4
 #define TASK_MAX_DURATION 4 // in seconds
 
-void free_task(Task *t)
+void free_task(Task* t)
 {
-        free(t->task_id);
-        free(t);
+        if (t) {
+                free(t->task_id);
+                free(t);
+        }
 }
 
-void free_task_list(Task *t, unsigned len)
+void free_task_list(Task* t, unsigned len)
 {
         for (unsigned i = 0; i < len; ++i) {
                 free((t+i)->task_id);
@@ -35,14 +37,14 @@ void generate_uuid(char* uuid, unsigned int length)
 
 void generate_task(Task* t)
 {
-        char* uuid = (char*) malloc(UUID_MAX_LENGTH * sizeof(char));
-        if (uuid == NULL) {
+        t->task_id = malloc((UUID_MAX_LENGTH + 1) * sizeof(char));
+        if (t->task_id == NULL) {
+                exit(EXIT_FAILURE);
                 /* add error handling */
         }
 
-        generate_uuid(uuid, UUID_MAX_LENGTH);
+        generate_uuid(t->task_id, UUID_MAX_LENGTH);
         t->duration = rand() % TASK_MAX_DURATION + 1;
-        t->task_id = uuid;
         t->last_ran = 0;
         t->turnaround = 0;
         t->wait = 0;

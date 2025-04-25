@@ -1,46 +1,55 @@
+#include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "queue.h"
 #include "task.h"
 
 
-TaskQueue init_empty_queue(unsigned int max_size)
+bool is_empty(TaskQueue *tq)
 {
-        TaskQueue tq;
-        tq.size = 0;
-        tq.max_size = max_size;
-        tq.task_list = malloc(sizeof(Task*) * max_size);
+        return tq->size == 0;
+}
 
-        if (tq.task_list == NULL) {
-                /* add error handling */
+bool is_full(TaskQueue *tq)
+{
+        return tq->size == tq->max_size;
+}
+
+TaskQueue* init_empty_queue(unsigned int max_size)
+{
+        TaskQueue* tq = malloc(sizeof(TaskQueue));
+        if (tq == NULL) {
+                return NULL;
+        }
+
+        tq->size = 0;
+        tq->max_size = max_size;
+        tq->task_list = malloc(sizeof(Task*) * max_size);
+
+        if (tq->task_list == NULL) {
+                free(tq);
+                return NULL;
         }
 
         return tq;
-};
-
-void free_queue(TaskQueue *tq)
-{
-        for (unsigned int i = 0; i < tq->size; ++i) {
-                Task* task_to_free = *(tq->task_list + i);
-                free_task(task_to_free);
-        }
-
-        free(tq->task_list);
 }
 
-bool queue(Task* t, TaskQueue* tq)
+bool enqueue(Task* t, TaskQueue* tq)
 {
+        if (!t || !tq || !tq->task_list) {
+                return false;
+        }
+
         if (is_full(tq)) {
                 return false;
         }
 
-        Task** task_list = tq->task_list;
-        task_list += tq->size; // move to last element
-        *task_list = t;
+        tq->task_list[tq->size] = t;
         tq->size += 1;
 
         return true;
-};
+}
 
 Task* dequeue(TaskQueue* tq)
 {
@@ -58,17 +67,7 @@ Task* dequeue(TaskQueue* tq)
         tq->size -= 1;
 
         return t;
-};
-
-bool is_empty(TaskQueue *tq)
-{
-        return tq->size == 0;
-};
-
-bool is_full(TaskQueue *tq)
-{
-        return tq->size == tq->max_size;
-};
+}
 
 Task* head(TaskQueue* tq)
 {
@@ -76,9 +75,8 @@ Task* head(TaskQueue* tq)
                 return NULL;
         }
 
-        Task** queue = tq->task_list;
-        return *queue;
-};
+        return tq->task_list[0];
+}
 
 Task* tail(TaskQueue* tq)
 {
@@ -86,6 +84,15 @@ Task* tail(TaskQueue* tq)
                 return NULL;
         }
 
-        Task** queue = tq->task_list;
-        return *(queue + tq->size - 1);
-};
+        return tq->task_list[tq->size-1];
+}
+
+void free_queue(TaskQueue *tq)
+{
+        for (unsigned int i = 0; i < tq->size; ++i) {
+                free_task(tq->task_list[i]);
+        }
+
+        free(tq->task_list);
+        free(tq);
+}
