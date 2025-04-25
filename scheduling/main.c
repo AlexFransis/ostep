@@ -8,7 +8,7 @@
 typedef void (*scheduler_func)(int);
 struct scheduler_entry
 {
-        const char *name;
+        const char* name;
         scheduler_func func;
 };
 
@@ -16,6 +16,7 @@ struct scheduler_entry schedulers[] =
 {
         {"fifo", start_fifo_scheduler},
         {"sjf", start_sjf_scheduler},
+        {"rr", start_rr_scheduler},
         // add schedulers here
 
         {NULL, NULL} // sentinel
@@ -24,7 +25,7 @@ struct scheduler_entry schedulers[] =
 void print_usage()
 {
         printf("Usage: ./main <scheduling_policy> <number_of_tasks>? <seed>?\n");
-        printf("  scheduling_policy: Strategy to use (fifo), (sjf)\n");
+        printf("  scheduling_policy: Strategy to use fifo, sjf, rr\n");
         printf("  seed: Random seed for reproducibility (default: current time)\n");
         printf("  number_of_tasks: Number of tasks to simulate (default: 10)\n");
 };
@@ -55,10 +56,12 @@ int main(int argc, char** argv)
         }
 
         srand(seed);
+
         struct scheduler_entry *entry = schedulers;
         while (entry->name != NULL) {
                 if (strcmp(strategy, entry->name) == 0) {
                         entry->func(task_count);
+
                         return EXIT_SUCCESS;
                 }
 
