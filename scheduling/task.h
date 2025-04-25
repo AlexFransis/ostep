@@ -15,7 +15,6 @@ typedef struct Task
 } Task;
 
 void free_task(Task* t);
-void free_task_list(Task* t, unsigned len);
 void generate_task(Task *t);
 
 #endif

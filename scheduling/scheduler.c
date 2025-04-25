@@ -51,6 +51,7 @@ void start_fifo_scheduler(int task_count)
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
+        free(tasks);
 }
 
 void start_sjf_scheduler(int task_count)
@@ -102,6 +103,7 @@ void start_sjf_scheduler(int task_count)
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
+        free(tasks);
 }
 
 void start_rr_scheduler(int task_count)
@@ -116,12 +118,7 @@ void start_rr_scheduler(int task_count)
         }
 
         for (int i = 0; i < task_count; ++i) {
-                // create task
                 generate_task(&tasks[i]);
-        }
-
-        // queue tasks
-        for (int i = 0; i < task_count; ++i) {
                 enqueue(&tasks[i], tq);
         }
 
@@ -131,7 +128,7 @@ void start_rr_scheduler(int task_count)
         double wait_sum = 0.0;
         double response_sum = 0.0;
 
-        // begin sjf scheduling
+        // begin rr scheduling
         while (tq->size > 0) {
                 Task* t = dequeue(tq);
 
@@ -169,4 +166,5 @@ void start_rr_scheduler(int task_count)
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
+        free(tasks);
 }

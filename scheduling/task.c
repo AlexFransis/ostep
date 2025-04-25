@@ -13,15 +13,6 @@ void free_task(Task* t)
         }
 }
 
-void free_task_list(Task* t, unsigned len)
-{
-        for (unsigned i = 0; i < len; ++i) {
-                free((t+i)->task_id);
-        }
-
-        free(t);
-}
-
 void generate_uuid(char* uuid, unsigned int length)
 {
         const char* alphanumeric = "0123456789abcdefghijklmnopqrstuvwxyz";

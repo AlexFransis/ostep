@@ -90,7 +90,7 @@ Task* tail(TaskQueue* tq)
 void free_queue(TaskQueue *tq)
 {
         for (unsigned int i = 0; i < tq->size; ++i) {
-                free_task(tq->task_list[i]);
+                free(tq->task_list[i]->task_id);
         }
 
         free(tq->task_list);
