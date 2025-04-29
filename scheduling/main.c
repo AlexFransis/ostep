@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "queue.h"
 #include "scheduler.h"
 
 typedef void (*scheduler_func)(int);

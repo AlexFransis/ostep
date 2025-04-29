@@ -6,7 +6,7 @@
 #include "task.h"
 #include "quicksort.h"
 
-#define QUANTUM 0.1
+#define QUANTUM 1
 
 
 void start_fifo_scheduler(int task_count)
@@ -36,9 +36,8 @@ void start_fifo_scheduler(int task_count)
         while (tq->size > 0) {
                 Task* t = dequeue(tq);
                 // print stats
-                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f\n", time, t->task_id, t->duration);
-                printf("  [ time %.2f ] response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
-                       time, time, time+t->duration, time);
+                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
+                       time, t->task_id, t->duration, time, time+t->duration, time);
 
                 time += t->duration;
                 response_sum += time;
@@ -46,8 +45,8 @@ void start_fifo_scheduler(int task_count)
                 wait_sum += time;
         }
 
-        printf("AVERAGE RUN\n");
-        printf("  response: %.2f -- turnaroud: %.2f -- wait: %.2f\n",
+        printf("AVERAGE RUN -- TOTAL TASK: %d\n", task_count);
+        printf(" avg response: %.2f -- avg turnaroud: %.2f -- avg wait: %.2f\n",
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
@@ -88,9 +87,8 @@ void start_sjf_scheduler(int task_count)
         while (tq->size > 0) {
                 Task* t = dequeue(tq);
                 // print statistics
-                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f\n", time, t->task_id, t->duration);
-                printf("  [ time %.2f ] response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
-                       time, time, time+t->duration, time);
+                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
+                       time, t->task_id, t->duration, time, time+t->duration, time);
 
                 time += t->duration;
                 response_sum += time;
@@ -98,8 +96,8 @@ void start_sjf_scheduler(int task_count)
                 wait_sum += time;
         }
 
-        printf("AVERAGE RUN\n");
-        printf("  response: %.2f -- turnaroud: %.2f -- wait: %.2f\n",
+        printf("AVERAGE RUN -- TOTAL TASK: %d\n", task_count);
+        printf(" avg response: %.2f -- avg turnaroud: %.2f -- avg wait: %.2f\n",
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
@@ -161,8 +159,8 @@ void start_rr_scheduler(int task_count)
                 t->last_ran = time;
         }
 
-        printf("AVERAGE RUN\n");
-        printf("  response: %.2f -- turnaroud: %.2f -- wait: %.2f\n",
+        printf("AVERAGE RUN -- TOTAL TASK: %d\n", task_count);
+        printf(" avg response: %.2f -- avg turnaroud: %.2f -- avg wait: %.2f\n",
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
