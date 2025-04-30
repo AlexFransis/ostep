@@ -8,11 +8,9 @@
         "args": [
           "-g",
           "main.c",
-          "fifo.c",
-          "queue.c",
+          "queue_linked_list.c",
           "scheduler.c",
           "task.c",
-          "cpu_core.c",
           "quicksort.c",
           "-o",
           "program"

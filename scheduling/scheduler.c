@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "scheduler.h"
-#include "queue.h"
+#include "queue_linked_list.h"
 #include "task.h"
 #include "quicksort.h"
 
@@ -13,17 +13,12 @@ void start_fifo_scheduler(int task_count)
 {
         // create queue
         TaskQueue* tq = init_empty_queue(task_count);
-        Task* tasks = (Task*) malloc(task_count * sizeof(Task));
-
-        if (tasks == NULL) {
-                // handle error
-        }
 
         // begin queuing tasks
         for (int i = 0; i < task_count; ++i) {
                 // create task
-                generate_task(&tasks[i]);
-                enqueue(&tasks[i], tq);
+                Task t = create_task(i);
+                enqueue(&t, tq);
         }
 
         // for statistics
@@ -34,12 +29,12 @@ void start_fifo_scheduler(int task_count)
 
         // begin fifo scheduling
         while (tq->size > 0) {
-                Task* t = dequeue(tq);
+                Task t = dequeue(tq);
                 // print stats
-                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
-                       time, t->task_id, t->duration, time, time+t->duration, time);
+                printf("  [ time %.2f ] JOB ID (%d) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
+                       time, t.task_id, t.duration, time, time+t.duration, time);
 
-                time += t->duration;
+                time += t.duration;
                 response_sum += time;
                 turnaround_sum += time;
                 wait_sum += time;
@@ -50,7 +45,6 @@ void start_fifo_scheduler(int task_count)
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
-        free(tasks);
 }
 
 void start_sjf_scheduler(int task_count)
@@ -58,7 +52,7 @@ void start_sjf_scheduler(int task_count)
         // create queue
         TaskQueue* tq = init_empty_queue(task_count);
 
-        // begin creating tasks and sorting them
+        // create array to sort tasks
         Task* tasks = (Task*) malloc(task_count * sizeof(Task));
         if (tasks == NULL) {
                 // handle error
@@ -66,7 +60,7 @@ void start_sjf_scheduler(int task_count)
 
         for (int i = 0; i < task_count; ++i) {
                 // create task
-                generate_task(&tasks[i]);
+                tasks[i] = create_task(i);
         }
 
         // sort task by ascending order of task duration
@@ -85,12 +79,12 @@ void start_sjf_scheduler(int task_count)
 
         // begin sjf scheduling
         while (tq->size > 0) {
-                Task* t = dequeue(tq);
+                Task t = dequeue(tq);
                 // print statistics
-                printf("  [ time %.2f ] JOB ID (%s) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
-                       time, t->task_id, t->duration, time, time+t->duration, time);
+                printf("  [ time %.2f ] JOB ID (%d) -- duration: %.2f -- response: %.2f secs -- turnaround: %.2f secs -- wait: %.2f secs\n",
+                       time, t.task_id, t.duration, time, time+t.duration, time);
 
-                time += t->duration;
+                time += t.duration;
                 response_sum += time;
                 turnaround_sum += time;
                 wait_sum += time;
@@ -109,15 +103,9 @@ void start_rr_scheduler(int task_count)
         // create queue
         TaskQueue* tq = init_empty_queue(task_count);
 
-        // begin creating tasks and sorting them
-        Task* tasks = (Task*) malloc(task_count * sizeof(Task));
-        if (tasks == NULL) {
-                // handle error
-        }
-
         for (int i = 0; i < task_count; ++i) {
-                generate_task(&tasks[i]);
-                enqueue(&tasks[i], tq);
+                Task t = create_task(i);
+                enqueue(&t, tq);
         }
 
         // for statistics
@@ -128,35 +116,35 @@ void start_rr_scheduler(int task_count)
 
         // begin rr scheduling
         while (tq->size > 0) {
-                Task* t = dequeue(tq);
+                Task task = dequeue(tq);
 
-                if (t->response == -1) {
-                        t->response = time;
+                if (task.response == -1) {
+                        task.response = time;
                 }
 
-                double current_wait = time - t->last_ran;
+                double current_wait = time - task.last_ran;
                 double ran_for = 0;
-                t->wait += current_wait;
+                task.wait += current_wait;
 
-                if (t->duration > QUANTUM) {
-                        t->duration -= QUANTUM;
+                if (task.duration > QUANTUM) {
+                        task.duration -= QUANTUM;
                         ran_for = QUANTUM;
-                        printf("  [ time %.2f ] JOB ID (%s) -- run job for %.2f\n", time, t->task_id, ran_for);
-                        enqueue(t, tq);
+                        printf("  [ time %.2f ] JOB ID (%d) -- run job for %.2f\n", time, task.task_id, ran_for);
+                        enqueue(&task, tq);
                 } else {
-                        ran_for = t->duration;
-                        t->turnaround = time + ran_for;
-                        printf("  [ time %.2f ] JOB ID (%s) -- run job for %.2f -- (DONE at %.2f)\n",
-                               time, t->task_id, ran_for, t->turnaround);
+                        ran_for = task.duration;
+                        task.turnaround = time + ran_for;
+                        printf("  [ time %.2f ] JOB ID (%d) -- run job for %.2f -- (DONE at %.2f)\n",
+                               time, task.task_id, ran_for, task.turnaround);
 
                         // task is complete, add to final statistics
-                        response_sum += t->response;
-                        turnaround_sum += t->turnaround;
-                        wait_sum += t->wait;
+                        response_sum += task.response;
+                        turnaround_sum += task.turnaround;
+                        wait_sum += task.wait;
                 }
 
                 time += ran_for;
-                t->last_ran = time;
+                task.last_ran = time;
         }
 
         printf("AVERAGE RUN -- TOTAL TASK: %d\n", task_count);
@@ -164,5 +152,4 @@ void start_rr_scheduler(int task_count)
                response_sum/task_count, turnaround_sum/task_count, wait_sum/task_count);
 
         free_queue(tq);
-        free(tasks);
 }

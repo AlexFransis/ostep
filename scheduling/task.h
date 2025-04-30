@@ -6,7 +6,7 @@
 struct Task;
 typedef struct Task
 {
-        char* task_id;
+        int task_id;
         double duration;
         double last_ran;
         double turnaround;
@@ -14,7 +14,6 @@ typedef struct Task
         double response;
 } Task;
 
-void free_task(Task* t);
-void generate_task(Task *t);
+Task create_task(int index);
 
 #endif
