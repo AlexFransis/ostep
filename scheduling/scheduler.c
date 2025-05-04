@@ -7,17 +7,12 @@
 #include "task.h"
 #include "quicksort.h"
 
-#ifndef QUANTUM
-#define QUANTUM 0.5
-#endif
-
-#ifndef PRIORITY_BOOST
-#define PRIORITY_BOOST 10
-#endif
-
-#ifndef LAMBDA
-#define LAMBDA 0.6
-#endif
+void set_scheduler_parameters(double quantum, double p_boost, double lambda)
+{
+        s_quantum = quantum;
+        s_priority_boost = p_boost;
+        s_lambda = lambda;
+}
 
 void start_fifo_scheduler(int task_count)
 {
@@ -116,7 +111,7 @@ void start_rr_scheduler(int task_count)
         double* task_arrival_times = malloc(sizeof(double) * task_count);
         double next_arrival = 0.0;
         for (int i = 0; i < task_count; ++i) {
-                double inter_arrival = generate_exponential_time(LAMBDA);
+                double inter_arrival = generate_exponential_time(s_lambda);
                 next_arrival += inter_arrival;
                 task_arrival_times[i] = next_arrival;
         }
@@ -152,9 +147,9 @@ void start_rr_scheduler(int task_count)
                         double ran_for = 0.0;
                         task->wait += current_wait;
 
-                        if (task->duration > QUANTUM) {
-                                task->duration -= QUANTUM;
-                                ran_for = QUANTUM;
+                        if (task->duration > s_quantum) {
+                                task->duration -= s_quantum;
+                                ran_for = s_quantum;
                                 printf("  [ time %.2f ] JOB ID (%d) -- run job for %.2f -- remaining: %.2f\n",
                                        time, task->task_id, ran_for, task->duration);
 
@@ -211,15 +206,15 @@ void start_mlfq_scheduler(int task_count)
         double* task_arrival_times = malloc(sizeof(double) * task_count);
         double next_arrival = 0.0;
         for (int i = 0; i < task_count; ++i) {
-                double inter_arrival = generate_exponential_time(LAMBDA);
+                double inter_arrival = generate_exponential_time(s_lambda);
                 next_arrival += inter_arrival;
                 task_arrival_times[i] = next_arrival;
         }
 
         double quanta[] = {
-                QUANTUM,
-                QUANTUM * 5,
-                QUANTUM * 10
+                s_quantum,
+                s_quantum * 5,
+                s_quantum * 10
         };
 
         // for statistics
@@ -233,8 +228,8 @@ void start_mlfq_scheduler(int task_count)
         double ran_for = 0;
         while (task_index < task_count || mlfq->size > 0) {
                 // start with top priority
-                unsigned int i = 0;
-                while (i < mlfq->queue_count) {
+                unsigned int queue_priority = 0;
+                while (queue_priority < mlfq->queue_count) {
                         // generate random job that enters enters the queue
                         while (task_index < task_count && task_arrival_times[task_index] < time) {
                                 Task* t = create_task(task_index);
@@ -245,29 +240,29 @@ void start_mlfq_scheduler(int task_count)
                                        time, t->task_id, t->duration);
 
                                 // set queue index to top priority
-                                i = 0;
+                                queue_priority = 0;
                         }
 
-                        if (mlfq->queues[i]->size > 0) {
-                                if (last_boost_time + PRIORITY_BOOST <= time) {
+                        if (mlfq->queues[queue_priority]->size > 0) {
+                                if (last_boost_time + s_priority_boost <= time) {
                                         printf("  [ time %.2f ] boosting priority of all jobs\n", time);
                                         boost_tasks_priority(mlfq);
                                         // reset to top priority queue
-                                        i = 0;
+                                        queue_priority = 0;
                                         last_boost_time = time;
                                 }
 
                                 // if there are jobs in higher priority queues switch to that queue
-                                if (i != 0) {
-                                        for (unsigned int j = 0; j < i; ++j) {
+                                if (queue_priority != 0) {
+                                        for (unsigned int j = 0; j < queue_priority; ++j) {
                                                 if (mlfq->queues[j]->size > 0) {
-                                                        i = j;
+                                                        queue_priority = j;
                                                         break;
                                                 }
                                         }
                                 }
 
-                                Task* task = mlfq_dequeue(mlfq, i);
+                                Task* task = mlfq_dequeue(mlfq, queue_priority);
 
                                 if (task->response == -1) {
                                         task->response = time - task->arrival_time;
@@ -276,30 +271,30 @@ void start_mlfq_scheduler(int task_count)
                                 double current_wait = time - task->last_ran;
                                 task->wait += current_wait;
 
-                                double quantum = quanta[i];
+                                double quantum = quanta[queue_priority];
                                 if (task->duration > quantum) {
                                         task->duration -= quantum;
                                         ran_for = quantum;
                                         if (task->preemption_limit > 0) {
                                                 task->preemption_limit--;
                                                 printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f\n",
-                                                       time, task->task_id, i, ran_for);
-                                                mlfq_enqueue(task, mlfq, i);
+                                                       time, task->task_id, queue_priority, ran_for);
+                                                mlfq_enqueue(task, mlfq, queue_priority);
 
-                                        } else if (i == mlfq->queue_count - 1) {
+                                        } else if (queue_priority == mlfq->queue_count - 1) {
                                                 printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f\n",
-                                                       time, task->task_id, i, ran_for);
-                                                mlfq_enqueue(task, mlfq, i);
+                                                       time, task->task_id, queue_priority, ran_for);
+                                                mlfq_enqueue(task, mlfq, queue_priority);
                                         } else {
                                                 printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f -- reducing job priority\n",
-                                                       time, task->task_id, i, ran_for);
-                                                mlfq_enqueue(task, mlfq, i+1);
+                                                       time, task->task_id, queue_priority, ran_for);
+                                                mlfq_enqueue(task, mlfq, queue_priority+1);
                                         }
                                 } else {
                                         ran_for = task->duration;
                                         task->turnaround = (time + ran_for - task->arrival_time);
                                         printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f -- (DONE at %.2f)\n",
-                                               time, task->task_id, i, ran_for, time+ran_for);
+                                               time, task->task_id, queue_priority, ran_for, time+ran_for);
 
                                         // task is complete, add to final statistics and free
                                         response_sum += task->response;
@@ -312,7 +307,7 @@ void start_mlfq_scheduler(int task_count)
                                 time += ran_for;
                                 task->last_ran = time;
                         }
-                        ++i;
+                        ++queue_priority;
                 }
 
                 if (task_index < task_count && mlfq->size == 0) {

@@ -6,7 +6,7 @@
         "type": "lldb",
         "request": "launch",
         "program": "${workspaceFolder}/program",
-        "args": ["rr", "1", "10"],
+        "args": ["mlfq", "1", "10", "0.5", "15", "0.5"],
         "cwd": "${workspaceFolder}",
         "stopOnEntry": false,
         "preLaunchTask": "Build C Program",

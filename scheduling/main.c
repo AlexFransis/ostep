@@ -24,10 +24,13 @@ struct scheduler_entry schedulers[] =
 
 void print_usage()
 {
-        printf("Usage: ./main <scheduling_policy> <number_of_tasks>? <seed>?\n");
+        printf("Usage: ./main <scheduling_policy> <number_of_tasks>? <seed>? <quantum>? <p_boost>? <lambda>?\n");
         printf("  scheduling_policy: Strategy to use fifo, sjf, rr\n");
         printf("  seed: Random seed for reproducibility (default: current time)\n");
         printf("  number_of_tasks: Number of tasks to simulate (default: 10)\n");
+        printf("  quantum: duration slice for each task\n");
+        printf("  p_boost: priority boost interval\n");
+        printf("  lambda: used to simulate arrival times and task duration\n");
 };
 
 int main(int argc, char** argv)
@@ -55,7 +58,12 @@ int main(int argc, char** argv)
 
         }
 
-        srand(seed);
+        if (argc >= 7) {
+                char* endptr;
+                set_scheduler_parameters(strtod(argv[4], &endptr), atoi(argv[5]), strtod(argv[6], &endptr));
+        }
+
+                srand(seed);
 
         struct scheduler_entry *entry = schedulers;
         while (entry->name != NULL) {
