@@ -16,6 +16,7 @@ struct scheduler_entry schedulers[] =
         {"fifo", start_fifo_scheduler},
         {"sjf", start_sjf_scheduler},
         {"rr", start_rr_scheduler},
+        {"mlfq", start_mlfq_scheduler},
         // add schedulers here
 
         {NULL, NULL} // sentinel

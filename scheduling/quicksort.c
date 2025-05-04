@@ -7,26 +7,26 @@ void swap(Task* a, Task* b)
         *b = tmp;
 }
 
-int partition(Task* list, int low, int high)
+int partition(Task** list, int low, int high)
 {
-        unsigned pivot_duration = list[high].duration;
+        unsigned pivot_duration = list[high]->duration;
         int i = low - 1; // i will track the boundary of the smallest number < pivot
 
         for (int j = low; j < high; ++j) {
-                if (list[j].duration < pivot_duration) {
+                if (list[j]->duration < pivot_duration) {
                         ++i;
-                        swap(&list[i], &list[j]);
+                        swap(list[i], list[j]);
                 }
         }
 
         // put the pivot after the last smallest number
-        swap(&list[i+1], &list[high]);
+        swap(list[i+1], list[high]);
 
         // return index of the pivot
         return i + 1;
 }
 
-void quicksort(Task* list, int low, int high)
+void quicksort(Task** list, int low, int high)
 {
         if (low < high) {
                 int pivot_index = partition(list, low, high);
@@ -37,7 +37,7 @@ void quicksort(Task* list, int low, int high)
 }
 
 // sort tasks by ascending order of task duration
-void sort_tasks(Task* list, int len)
+void sort_tasks(Task** list, int len)
 {
         int low = 0;
         int high = len - 1;

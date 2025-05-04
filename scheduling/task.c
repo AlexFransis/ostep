@@ -1,21 +1,34 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "task.h"
 
-#define UUID_MAX_LENGTH 4
-#define TASK_MAX_DURATION 4 // in seconds
+#define MEAN_DURATION 6.0
 
 
-Task create_task(int index)
+double generate_exponential_time(double lambda)
 {
-        Task t;
-        t.task_id = index;
-        t.last_ran = 0;
-        t.turnaround = 0;
-        t.wait = 0;
-        t.response = -1;
-        t.duration = rand() % TASK_MAX_DURATION + 1;
+        double u = ((double) rand() / (RAND_MAX));
+        return -log(1 - u) / lambda;
+}
+
+Task* create_task(int index)
+{
+        Task* t = malloc(sizeof(Task));
+        if (t == NULL) {
+                fprintf(stderr, "Failed to allocate memory for Task\n");
+                exit(EXIT_FAILURE);
+        }
+
+        t->task_id = index;
+        t->last_ran = 0.0;
+        t->turnaround = 0.0;
+        t->wait = 0.0;
+        t->response = -1;
+        t->arrival_time = -1;
+        t->preemption_limit = 1;
+        t->duration = generate_exponential_time(1.0 / MEAN_DURATION);
 
         return t;
 }

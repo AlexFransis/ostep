@@ -3,8 +3,7 @@
 
 #include <stdbool.h>
 
-struct Task;
-typedef struct Task
+typedef struct
 {
         int task_id;
         double duration;
@@ -12,8 +11,11 @@ typedef struct Task
         double turnaround;
         double wait;
         double response;
+        double arrival_time;
+        double preemption_limit;
 } Task;
 
-Task create_task(int index);
+Task* create_task(int index);
+double generate_exponential_time(double lambda);
 
 #endif

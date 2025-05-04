@@ -3,6 +3,6 @@
 
 #include "task.h"
 
-void sort_tasks(Task list[], int len);
+void sort_tasks(Task** task_list, int len);
 
 #endif
