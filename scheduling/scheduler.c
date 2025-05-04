@@ -295,15 +295,6 @@ void start_mlfq_scheduler(int task_count)
                                                        time, task->task_id, i, ran_for);
                                                 mlfq_enqueue(task, mlfq, i+1);
                                         }
-                                        /* if (i == mlfq->queue_count - 1) { */
-                                        /*         printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f\n", */
-                                        /*                time, task->task_id, i, ran_for); */
-                                        /*         mlfq_enqueue(task, mlfq, i); */
-                                        /* } else { */
-                                        /*         printf("  [ time %.2f ] JOB ID (%d) -- PRIORITY (%d) -- run job for %.2f -- reducing job priority\n", */
-                                        /*                time, task->task_id, i, ran_for); */
-                                        /*         mlfq_enqueue(task, mlfq, i+1); */
-                                        /* } */
                                 } else {
                                         ran_for = task->duration;
                                         task->turnaround = (time + ran_for - task->arrival_time);
