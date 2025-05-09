@@ -26,8 +26,8 @@ void print_usage()
 {
         printf("Usage: ./main <scheduling_policy> <number_of_tasks>? <seed>? <quantum>? <p_boost>? <lambda>?\n");
         printf("  scheduling_policy: Strategy to use fifo, sjf, rr\n");
-        printf("  seed: Random seed for reproducibility (default: current time)\n");
         printf("  number_of_tasks: Number of tasks to simulate (default: 10)\n");
+        printf("  seed: Random seed for reproducibility (default: current time)\n");
         printf("  quantum: duration slice for each task\n");
         printf("  p_boost: priority boost interval\n");
         printf("  lambda: used to simulate arrival times and task duration\n");
@@ -43,19 +43,19 @@ int main(int argc, char** argv)
 
         char* strategy = argv[1];
 
-        int seed = (int) time(NULL);
-        if (argc >= 3) {
-                seed = atoi(argv[2]);
-        }
-
         int task_count = 10;
-        if (argc >= 4) {
-                task_count = atoi(argv[3]);
+        if (argc >= 3) {
+                task_count = atoi(argv[2]);
                 if (task_count <= 0) {
                         printf("Invalid number of tasks\n");
                         return EXIT_FAILURE;
                 }
 
+        }
+
+        int seed = (int) time(NULL);
+        if (argc >= 4) {
+                seed = atoi(argv[3]);
         }
 
         if (argc >= 7) {

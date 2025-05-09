@@ -1,26 +1,26 @@
 #include "quicksort.h"
 
-void swap(Task* a, Task* b)
+void swap(Task** a, Task** b)
 {
-        Task tmp = *a;
+        Task* tmp = *a;
         *a = *b;
         *b = tmp;
 }
 
 int partition(Task** list, int low, int high)
 {
-        unsigned pivot_duration = list[high]->duration;
+        double pivot_duration = list[high]->duration;
         int i = low - 1; // i will track the boundary of the smallest number < pivot
 
         for (int j = low; j < high; ++j) {
                 if (list[j]->duration < pivot_duration) {
                         ++i;
-                        swap(list[i], list[j]);
+                        swap(&list[i], &list[j]);
                 }
         }
 
         // put the pivot after the last smallest number
-        swap(list[i+1], list[high]);
+        swap(&list[i+1], &list[high]);
 
         // return index of the pivot
         return i + 1;
