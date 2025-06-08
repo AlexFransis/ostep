@@ -31,8 +31,8 @@ void quicksort(Task** list, int low, int high)
         if (low < high) {
                 int pivot_index = partition(list, low, high);
 
-                quicksort(list, low, pivot_index - 1); // left size [low ... pivot_index - 1]
-                quicksort(list, pivot_index + 1, high); // rightsize [pivot_index + 1 ... high]
+                quicksort(list, low, pivot_index - 1); // left side [low ... pivot_index - 1]
+                quicksort(list, pivot_index + 1, high); // right side [pivot_index + 1 ... high]
         }
 }
 

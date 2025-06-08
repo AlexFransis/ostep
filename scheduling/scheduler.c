@@ -186,8 +186,8 @@ void start_rr_scheduler(int task_count)
 
 void boost_tasks_priority(MLFQ* mlfq)
 {
-        for (int i = mlfq->queue_count - 1; i > 0; --i) {
-                if (mlfq->size > 0) {
+        if (mlfq->size > 0) {
+                for (int i = mlfq->queue_count - 1; i > 0; --i) {
                         while (mlfq->queues[i]->size > 0) {
                                 Task* t = mlfq_dequeue(mlfq, i);
                                 t->preemption_limit = 1;
